@@ -3,11 +3,10 @@ project(scikitc C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_library(scikitc STATIC library.c
-        matrix.c
-        stats.c
-        utils.c
-        matrix.h
-        utils.h
-        stats.h
+add_library(scikitc STATIC
+        src/matrix.c
+        src/stats.c
+        src/stats.h
+        src/utils.c
+        src/utils.h
 )

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-
 #include "matrix.h"
-#include "util.h"
+
+
 
 #define CANNOT_ADD_TO_ROW "Cannot add row %d to row %d. Matrix has only %d rows"
 #define CANNOT_REMOVE_COLUMN "Cannot remove column %d. Matrix has only %d columns"
@@ -20,18 +20,20 @@
 
 
 // Prints the matrix on the stdout (with a custom formatting for elements)
-void print_matrix(Matrix *matrix, const char *d_fmt) {
-    int i, j;
-    fprintf(stdout, "\n");
-    for (i = 0; i < matrix->num_rows; ++i) {
-        for (j = 0; j < matrix->num_cols; ++j) {
-            fprintf(stdout, d_fmt, matrix->data[i][j]);
-        }
-        fprintf(stdout, "\n");
-    }
-    fprintf(stdout, "\n");
-}
 
+
+int validate_matrix(unsigned int num_rows, unsigned int num_cols) {
+    if (num_cols > 0 && num_rows > 0) {
+        return 1;
+    }
+    return 0;
+};
+
+double rand_interval(double min, double max) {
+    double d;
+    d = (double) rand() / ((double) RAND_MAX + 1);
+    return (min + d * (max - min));
+}
 
 // Constructor-like
 // Allocates memory for a new matrix
@@ -54,7 +56,7 @@ Matrix *make_matrix(unsigned int num_rows, unsigned int num_cols) {
         return m;
     }
     return NULL;
-};
+}
 
 void free_matrix(Matrix *matrix) {
     int i;
@@ -63,7 +65,7 @@ void free_matrix(Matrix *matrix) {
     }
     free(matrix->data);
     free(matrix);
-};
+}
 
 // Dynamically allocates a new Matrix
 // Initialise the matrix by copying another one

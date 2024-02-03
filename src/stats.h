@@ -4,5 +4,9 @@
 
 #ifndef STATS_H
 #define STATS_H
+#include "stats.c"
+
+double matrix_col_mean(Matrix *m, unsigned int col);
 
 #endif //STATS_H
+

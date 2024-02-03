@@ -49,29 +49,23 @@ cmake_ninja_workdir = /Users/michaelthomas/CLionProjects/scikitc/cmake-build-deb
 
 build cmake_object_order_depends_target_scikitc: phony || CMakeFiles/scikitc.dir
 
-build CMakeFiles/scikitc.dir/library.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/library.c || cmake_object_order_depends_target_scikitc
-  DEP_FILE = CMakeFiles/scikitc.dir/library.c.o.d
+build CMakeFiles/scikitc.dir/src/matrix.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/src/matrix.c || cmake_object_order_depends_target_scikitc
+  DEP_FILE = CMakeFiles/scikitc.dir/src/matrix.c.o.d
   FLAGS = -g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.0 -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/scikitc.dir
-  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir
+  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir/src
 
-build CMakeFiles/scikitc.dir/matrix.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/matrix.c || cmake_object_order_depends_target_scikitc
-  DEP_FILE = CMakeFiles/scikitc.dir/matrix.c.o.d
+build CMakeFiles/scikitc.dir/src/stats.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/src/stats.c || cmake_object_order_depends_target_scikitc
+  DEP_FILE = CMakeFiles/scikitc.dir/src/stats.c.o.d
   FLAGS = -g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.0 -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/scikitc.dir
-  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir
+  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir/src
 
-build CMakeFiles/scikitc.dir/stats.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/stats.c || cmake_object_order_depends_target_scikitc
-  DEP_FILE = CMakeFiles/scikitc.dir/stats.c.o.d
+build CMakeFiles/scikitc.dir/src/utils.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/src/utils.c || cmake_object_order_depends_target_scikitc
+  DEP_FILE = CMakeFiles/scikitc.dir/src/utils.c.o.d
   FLAGS = -g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.0 -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/scikitc.dir
-  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir
-
-build CMakeFiles/scikitc.dir/utils.c.o: C_COMPILER__scikitc_unscanned_Debug /Users/michaelthomas/CLionProjects/scikitc/utils.c || cmake_object_order_depends_target_scikitc
-  DEP_FILE = CMakeFiles/scikitc.dir/utils.c.o.d
-  FLAGS = -g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.0 -fcolor-diagnostics
-  OBJECT_DIR = CMakeFiles/scikitc.dir
-  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir
+  OBJECT_FILE_DIR = CMakeFiles/scikitc.dir/src
 
 
 # =============================================================================
@@ -81,7 +75,7 @@ build CMakeFiles/scikitc.dir/utils.c.o: C_COMPILER__scikitc_unscanned_Debug /Use
 #############################################
 # Link the static library libscikitc.a
 
-build libscikitc.a: C_STATIC_LIBRARY_LINKER__scikitc_Debug CMakeFiles/scikitc.dir/library.c.o CMakeFiles/scikitc.dir/matrix.c.o CMakeFiles/scikitc.dir/stats.c.o CMakeFiles/scikitc.dir/utils.c.o
+build libscikitc.a: C_STATIC_LIBRARY_LINKER__scikitc_Debug CMakeFiles/scikitc.dir/src/matrix.c.o CMakeFiles/scikitc.dir/src/stats.c.o CMakeFiles/scikitc.dir/src/utils.c.o
   ARCH_FLAGS = -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.0
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/scikitc.dir

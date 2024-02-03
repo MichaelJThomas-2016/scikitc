@@ -6,6 +6,13 @@
 #define MATRIX_H
 #define RE_MIN_COEF = 0.000000000000001
 
+#define NP_CHECK(ptr) \
+if (!(ptr)) { \
+fprintf(stderr, "%s:%d NULL POINTER: %s n", \
+__FILE__, __LINE__, (#ptr)); \
+exit(-1); \
+}
+
 // *****************************************************************************
 //
 // Library structures
@@ -13,13 +20,15 @@
 // *****************************************************************************
 
 typedef struct Matrix {
-    unsigned int num_rows;
-    unsigned int num_cols;
+    int num_rows;
+    int num_cols;
     // ND array tjat stores data in rows and colms
     double **data;
     // Bool that determines if the matrix is `square` N == M
     int is_square;
 } Matrix;
+
+double rand_interval(double min, double max);
 
 // *****************************************************************************
 //
@@ -28,6 +37,7 @@ typedef struct Matrix {
 // *****************************************************************************
 
 Matrix *make_matrix(unsigned int num_rows, unsigned int num_cols);
+int validate_matrix(unsigned int num_rows, unsigned int num_cols);
 Matrix *make_rand_matrix(unsigned int num_rows, unsigned int num_cols, double min, double max);
 Matrix *make_square_matrix(unsigned int size);
 Matrix *matrix_cp(Matrix *m);
@@ -63,18 +73,15 @@ void print_matrix(Matrix *matrix, const char *d_fmt);
 // *****************************************************************************
 Matrix *matrix_add(Matrix *m1, Matrix *m2);
 Matrix *matrix_sub(Matrix *m1, Matrix *m2);
-int matrix_eqdim(Matrix *m1, Matrix *m2);
-int matrix_eq(Matrix *m1, Matrix *m2, double tolerance);
 Matrix *matrix_row_scalar_mult(Matrix *m, unsigned int row, double scalar);
 Matrix *matrix_get_row(Matrix *m, unsigned int row);
-Matrix *matrix_get_column(Matrix *m, unsigned int row);
+Matrix *matrix_get_column(Matrix *m, unsigned int col);
 void matrix_set_all(Matrix *m, double val);
 int matrix_set_diagonal(Matrix *m, double val);
 int matrix_row_scalar_mult_r(Matrix *m, unsigned int row, double scalar);
 Matrix *matrix_row_scalar_mult(Matrix *m, unsigned int row, double num);
 int matrix_column_scalar_mult_r(Matrix *m, unsigned int col, double scalar);
 Matrix *matrix_column_scalar_mult(Matrix *m, unsigned int col, double num);
-int matrix_add_row_r(Matrix *m, unsigned int where, unsigned int row, double multiplier);
 int matrix_add_row_r(Matrix *m, unsigned int where, unsigned int row, double multiplier);
 Matrix *matrix_add_row(Matrix *m, unsigned int where, unsigned int col, double multiplier);
 int matrix_mult_scalar_r(Matrix *m, double scalar);
