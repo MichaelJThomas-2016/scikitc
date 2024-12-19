@@ -1,99 +1,183 @@
-//
-// Created by Michael Thomas on 2/2/24.
-//
+/**
+Copyright 20201 Andrei N. Ciobanu
 
-#ifndef MATRIX_H
-#define MATRIX_H
-#define RE_MIN_COEF = 0.000000000000001
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-#define NP_CHECK(ptr) \
-if (!(ptr)) { \
-fprintf(stderr, "%s:%d NULL POINTER: %s n", \
-__FILE__, __LINE__, (#ptr)); \
-exit(-1); \
-}
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef nml_UTIL
+#define nml_UTIL
+
+#include "utils.h"
+
+#define NML_MIN_COEF 0.000000000000001
 
 // *****************************************************************************
 //
 // Library structures
 //
 // *****************************************************************************
+typedef struct matrix_s {
+  unsigned int num_rows;
+  unsigned int num_cols;
+  double **data;
+  int is_square;
+} matrix;
 
-typedef struct Matrix {
-    int num_rows;
-    int num_cols;
-    // ND array tjat stores data in rows and colms
-    double **data;
-    // Bool that determines if the matrix is `square` N == M
-    int is_square;
-} Matrix;
+typedef struct matrix_lup_s {
+  matrix *L;
+  matrix *U;
+  matrix *P;
+  unsigned int num_permutations;
+} matrix_lup;
 
-double rand_interval(double min, double max);
+typedef struct matrix_qr_s {
+  matrix *Q;
+  matrix *R;
+} matrix_qr;
 
 // *****************************************************************************
 //
 // Constructing and destroying a matrix struct
 //
 // *****************************************************************************
-
-Matrix *make_matrix(unsigned int num_rows, unsigned int num_cols);
-int validate_matrix(unsigned int num_rows, unsigned int num_cols);
-Matrix *make_rand_matrix(unsigned int num_rows, unsigned int num_cols, double min, double max);
-Matrix *make_square_matrix(unsigned int size);
-Matrix *matrix_cp(Matrix *m);
-Matrix *make_eye_matrix(unsigned int size);
-Matrix *make_square_rand_matrix(unsigned int size, double min, double max);
-Matrix *matrix_from_file(FILE *f);
-void free_matrix(Matrix *matrix);
-
+matrix *matrix_new(unsigned int num_rows, unsigned int num_cols);
+matrix *matrix_rnd(unsigned int num_rows, unsigned int num_cols, double min, double max);
+matrix *matrix_sqr(unsigned int size);
+matrix *matrix_sqr_rnd(unsigned int size, double min, double max);
+matrix *matrix_eye(unsigned int size);
+matrix *matrix_cp(matrix *m);
+matrix *matrix_from(unsigned int num_rows, unsigned int num_cols, unsigned int n_vals, double *vals);
+matrix *matrix_fromfile(const char *file);
+matrix *matrix_fromfilef(FILE *f);
+void matrix_free(matrix *matrix);
 
 // *****************************************************************************
 //
 // Matrix Equality
 //
 // *****************************************************************************
-int matrix_eqdim(Matrix *m1, Matrix *m2);
-int matrix_eq(Matrix *m1, Matrix *m2,double tolerance);
-
+int matrix_eqdim(matrix *m1, matrix *m2);
+int matrix_eq(matrix *m1, matrix *m2, double tolerance);
 
 // *****************************************************************************
 //
 // Matrix printing
 //
 // *****************************************************************************
-void print_matrix(Matrix *matrix, const char *d_fmt);
+void matrix_print(matrix *matrix);
+void matrix_printf(matrix *matrix, const char *d_fmt);
 
+// *****************************************************************************
+//
+// Accessing and modifying matrix elements
+//
+// *****************************************************************************
+double matrix_get(matrix *matrix, unsigned int i, unsigned int j);
+void matrix_set(matrix *matrix, unsigned int i, unsigned int j, double value);
+matrix *matrix_col_get(matrix *m, unsigned int col);
+matrix *matrix_col_mult(matrix *m, unsigned int col, double num);
+int matrix_col_mult_r(matrix *m, unsigned int col, double num);
+matrix *matrix_row_get(matrix *m, unsigned int row);
+matrix *matrix_row_mult(matrix *m, unsigned int row, double num);
+int matrix_row_mult_r(matrix *m, unsigned int row, double num);
+void matrix_all_set(matrix *matrix, double value);
+int matrix_diag_set(matrix *matrix, double value);
+matrix *matrix_row_addrow(matrix *m, unsigned int where, unsigned int row, double multiplier);
+int matrix_row_addrow_r(matrix *m, unsigned int where, unsigned int row, double multiplier);
+matrix *matrix_smult(matrix *m, double num);
+int matrix_smult_r(matrix *m, double num);
 
-
+// *****************************************************************************
+//
+// Modifying the matrix structure
+//
+// *****************************************************************************
+matrix *matrix_col_rem(matrix *m, unsigned int column);
+matrix *matrix_row_rem(matrix *m, unsigned int row);
+matrix *matrix_row_swap(matrix *m, unsigned int row1, unsigned int row2);
+int matrix_row_swap_r(matrix *m, unsigned int row1, unsigned int row2);
+matrix *matrix_col_swap(matrix *m, unsigned int col1, unsigned int col2);
+int matrix_col_swap_r(matrix *m, unsigned int col1, unsigned int col2);
+matrix *matrix_cath(unsigned int mnun, matrix **matrices);
+matrix *matrix_catv(unsigned int mnum, matrix **matrices);
 
 // *****************************************************************************
 //
 // Matrix Operations
 //
 // *****************************************************************************
-Matrix *matrix_add(Matrix *m1, Matrix *m2);
-Matrix *matrix_sub(Matrix *m1, Matrix *m2);
-Matrix *matrix_row_scalar_mult(Matrix *m, unsigned int row, double scalar);
-Matrix *matrix_get_row(Matrix *m, unsigned int row);
-Matrix *matrix_get_column(Matrix *m, unsigned int col);
-void matrix_set_all(Matrix *m, double val);
-int matrix_set_diagonal(Matrix *m, double val);
-int matrix_row_scalar_mult_r(Matrix *m, unsigned int row, double scalar);
-Matrix *matrix_row_scalar_mult(Matrix *m, unsigned int row, double num);
-int matrix_column_scalar_mult_r(Matrix *m, unsigned int col, double scalar);
-Matrix *matrix_column_scalar_mult(Matrix *m, unsigned int col, double num);
-int matrix_add_row_r(Matrix *m, unsigned int where, unsigned int row, double multiplier);
-Matrix *matrix_add_row(Matrix *m, unsigned int where, unsigned int col, double multiplier);
-int matrix_mult_scalar_r(Matrix *m, double scalar);
-Matrix *matrix_mult_scalar(Matrix *m, double scalar);
-Matrix *matrix_drop_column(Matrix *m, unsigned int col);
-Matrix *matrix_drop_row(Matrix *m, unsigned int row);
-int matrix_swap_row_r(Matrix *m, unsigned int row1, unsigned int row2);
-Matrix *maxrtix_swap_row(Matrix *m, unsigned int row1, unsigned int row2);
-int matrix_swap_column_r(Matrix *m, unsigned int col1, unsigned int col2);
-Matrix *matrix_swap_column(Matrix *m, unsigned int col1, unsigned int col2);
-Matrix *matrix_concatenate_horizontal(unsigned int mnum, Matrix **matricies);
-Matrix *matrix_concate_vertical(unsigned int mnum, Matrix **matricies);
-int matrix_sub_r(Matrix *m1, Matrix *m2);
-Matrix *matrix_dot(Matrix *m1, Matrix *m2);
-#endif //MATRIX_H
+matrix *matrix_add(matrix *m1, matrix *m2);
+int matrix_add_r(matrix *m1, matrix *m2);
+matrix *matrix_sub(matrix *m1, matrix *m2);
+int matrix_sub_r(matrix *m1, matrix *m2);
+matrix *matrix_dot(matrix *m1, matrix *m2);
+matrix *matrix_transp(matrix *m);
+double matrix_trace(matrix* m);
+
+// *****************************************************************************
+//
+// Row Echelon
+//
+// *****************************************************************************
+matrix *matrix_ref(matrix *m);
+matrix *matrix_rref(matrix *m);
+
+// *****************************************************************************
+//
+// LUP Decomposition
+//
+// *****************************************************************************
+
+matrix_lup *matrix_lup_new(matrix *L, matrix *U, matrix *P, unsigned int num_permutations);
+matrix_lup *matrix_lup_solve(matrix *m);
+void matrix_lup_free(matrix_lup* lu);
+void matrix_lup_print(matrix_lup *lu);
+void matrix_lup_printf(matrix_lup *lu, const char *fmt);
+double matrix_det(matrix_lup* lup);
+matrix *matrix_lu_get(matrix_lup* lup);
+matrix *matrix_inv(matrix_lup *m);
+
+// *****************************************************************************
+//
+// Solving linear systems of equations
+//
+// *****************************************************************************
+
+matrix *nml_ls_solvefwd(matrix *low_triang, matrix *b);
+matrix *nml_ls_solvebck(matrix *upper_triang, matrix *b);
+matrix *nml_ls_solve(matrix_lup *lup, matrix* b);
+
+// *****************************************************************************
+//
+// QR Decomposition
+//
+// *****************************************************************************
+
+double nml_vect_dot(matrix *m1, unsigned int m1col, matrix *m2, unsigned m2col);
+matrix *matrix_l2norm(matrix *m);
+double matrix_col_l2norm(matrix *m1, unsigned int j);
+matrix *matrix_normalize(matrix *m);
+int matrix_normalize_r(matrix *m);
+matrix_qr *matrix_qr_new();
+void matrix_qr_free(matrix_qr *qr);
+matrix_qr * matrix_qr_solve(matrix *m);
+
+#endif
+
+#ifdef __cplusplus
+}
+#endif
