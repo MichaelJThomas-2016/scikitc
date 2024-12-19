@@ -1,29 +1,13 @@
-/**
-Copyright 20201 Andrei N. Ciobanu
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef nml_UTIL
-#define nml_UTIL
+#ifndef UTIL
+#define UTIL
 
 #include "utils.h"
 
-#define NML_MIN_COEF 0.000000000000001
+
 
 // *****************************************************************************
 //
@@ -157,9 +141,9 @@ matrix *matrix_inv(matrix_lup *m);
 //
 // *****************************************************************************
 
-matrix *nml_ls_solvefwd(matrix *low_triang, matrix *b);
-matrix *nml_ls_solvebck(matrix *upper_triang, matrix *b);
-matrix *nml_ls_solve(matrix_lup *lup, matrix* b);
+matrix *matrix_ls_solvefwd(matrix *low_triang, matrix *b);
+matrix *matrix_ls_solvebck(matrix *upper_triang, matrix *b);
+matrix *matrix_ls_solve(matrix_lup *lup, matrix* b);
 
 // *****************************************************************************
 //
@@ -167,7 +151,7 @@ matrix *nml_ls_solve(matrix_lup *lup, matrix* b);
 //
 // *****************************************************************************
 
-double nml_vect_dot(matrix *m1, unsigned int m1col, matrix *m2, unsigned m2col);
+double matrix_vect_dot(matrix *m1, unsigned int m1col, matrix *m2, unsigned m2col);
 matrix *matrix_l2norm(matrix *m);
 double matrix_col_l2norm(matrix *m1, unsigned int j);
 matrix *matrix_normalize(matrix *m);

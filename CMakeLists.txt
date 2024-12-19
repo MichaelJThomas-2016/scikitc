@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 99)
 
 add_library(scikitc STATIC
         src/matrix.c
-        src/stats.c
+        src/utils.c

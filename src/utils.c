@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdarg.h>
 #include "utils.h"
@@ -49,7 +47,7 @@ void mat_vlog(
 #endif
 }
 
-double mat_rand_interval(double min, double max) {
+double matrix_rand_interval(double min, double max) {
   double d;
   d = (double) rand() / ((double) RAND_MAX + 1);
   return (min + d * (max - min));

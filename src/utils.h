@@ -32,7 +32,7 @@ extern "C" {
 #define YELLOW "\033[0;33m"
 #define RESET "\033[0m"
 
-double mat_rand_interval(double min, double max);
+double matrix_rand_interval(double min, double max);
 
 void mat_log(FILE *stream, const char *file_name,
   unsigned int line, const char *format, ...);

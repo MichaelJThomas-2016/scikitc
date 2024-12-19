@@ -1,19 +1,3 @@
-/**
-Copyright 20201 Andrei N. Ciobanu
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
@@ -24,6 +8,8 @@ limitations under the License.
 #include "matrix.h"
 
 #define DEFAULT_VALUE 0.0
+
+#define MAT_MIN_COEF 0.000000000000001
 
 #define CANNOT_ADD "Cannot add two matrices with different dimensions.\n"
 
@@ -151,7 +137,7 @@ matrix *matrix_rnd(unsigned int num_rows, unsigned int num_cols, double min, dou
   int i, j;
   for(i = 0; i < num_rows; i++) {
     for(j = 0; j < num_cols; j++) {
-      r->data[i][j] = nml_rand_interval(min, max);
+      r->data[i][j] = mat_rand_interval(min, max);
     }
   }
   return r;
@@ -720,7 +706,7 @@ int _matrix_pivotidx(matrix *m, unsigned int col, unsigned int row) {
   // No validations are made, this is an API Method
   int i;
   for(i = row; i < m->num_rows; i++) {
-    if (fabs(m->data[i][col]) > NML_MIN_COEF) {
+    if (fabs(m->data[i][col]) > MAT_MIN_COEF) {
       return i;
     }
   }
@@ -742,7 +728,7 @@ int _matrix_pivotmaxidx(matrix *m, unsigned int col, unsigned int row) {
       maxi = i;
     }
   }
-  return (max < NML_MIN_COEF) ? -1 : maxi;
+  return (max < MAT_MIN_COEF) ? -1 : maxi;
 }
 
 // Retrieves the matrix in Row Echelon form using Gauss Elimination
@@ -768,7 +754,7 @@ matrix *matrix_ref(matrix *m) {
     matrix_row_mult_r(r, i, 1/r->data[i][j]);
     // We add multiplies of the pivot so every element on the column equals 0
     for(k = i+1; k < r->num_rows; k++) {
-      if (fabs(r->data[k][j]) > NML_MIN_COEF) {
+      if (fabs(r->data[k][j]) > MAT_MIN_COEF) {
         matrix_row_addrow_r(r, k, i, -(r->data[k][j]));
       }
     }
@@ -878,7 +864,7 @@ matrix_lup *matrix_lup_solve(matrix *m) {
   for(j = 0; j < U->num_cols; j++) {
     // Retrieves the row with the biggest element for column (j)
     pivot = _matrix_absmaxr(U, j);
-    if (fabs(U->data[pivot][j]) < NML_MIN_COEF) {
+    if (fabs(U->data[pivot][j]) < MAT_MIN_COEF) {
       MAT_ERROR(CANNOT_LU_MATRIX_DEGENERATE);
       return NULL;
     }
@@ -953,7 +939,7 @@ matrix *matrix_lu_get(matrix_lup* lup) {
 // be solved
 //
 // Note: This function is usually used with an L matrix from a LU decomposition
-matrix *nml_ls_solvefwd(matrix *L, matrix *b) {
+matrix *matrix_ls_solvefwd(matrix *L, matrix *b) {
   matrix* x = matrix_new(L->num_cols, 1);
   int i,j;
   double tmp;
@@ -981,7 +967,7 @@ matrix *nml_ls_solvefwd(matrix *L, matrix *b) {
 //
 // Note: In case any of the diagonal elements (U[i][i]) are 0 the system cannot
 // be solved
-matrix *nml_ls_solvebck(matrix *U, matrix *b) {
+matrix *matrix_ls_solvebck(matrix *U, matrix *b) {
   matrix *x = matrix_new(U->num_cols, 1);
   int i = U->num_cols, j;
   double tmp;
@@ -1007,7 +993,7 @@ matrix *nml_ls_solvebck(matrix *U, matrix *b) {
 //    U * x = y (backward substition)
 //
 // We obtain and return x
-matrix *nml_ls_solve(matrix_lup *lu, matrix* b) {
+matrix *matrix_ls_solve(matrix_lup *lu, matrix* b) {
   if (lu->U->num_rows != b->num_rows || b->num_cols != 1) {
     MAT_FERROR(CANNOT_SOLVE_LIN_SYS_INVALID_B,
       b->num_rows,
@@ -1019,10 +1005,10 @@ matrix *nml_ls_solve(matrix_lup *lu, matrix* b) {
   matrix *Pb = matrix_dot(lu->P, b);
 
   // We solve L*y = P*b using forward substition
-  matrix *y = nml_ls_solvefwd(lu->L, Pb);
+  matrix *y = matrix_ls_solvefwd(lu->L, Pb);
 
   // We solve U*x=y
-  matrix *x = nml_ls_solvebck(lu->U, y);
+  matrix *x = matrix_ls_solvebck(lu->U, y);
 
   matrix_free(y);
   matrix_free(Pb);
@@ -1039,7 +1025,7 @@ matrix *matrix_inv(matrix_lup *lup) {
   int i,j;
   for(j =0; j < n; j++) {
     Ix = matrix_col_get(I, j);
-    invx = nml_ls_solve(lup, Ix);
+    invx = matrix_ls_solve(lup, Ix);
     for(i = 0; i < invx->num_rows; i++) {
       r->data[i][j] = invx->data[i][0];
     }
@@ -1060,7 +1046,7 @@ matrix *matrix_inv(matrix_lup *lup) {
 // Represents the (dot) product of two vectors:
 // vector1 = m1col column from m1
 // vector2 = m2col column from m2
-double nml_vect_dot(matrix *m1, unsigned int m1col, matrix *m2, unsigned m2col) {
+double matrix_vect_dot(matrix *m1, unsigned int m1col, matrix *m2, unsigned m2col) {
   if (m1->num_rows!=m2->num_rows) {
     MAT_FERROR(CANNOT_VECT_DOT_DIMENSIONS, m1->num_rows, m2->num_rows);
   }
@@ -1120,7 +1106,7 @@ int matrix_normalize_r(matrix *m) {
   matrix *l2norms = matrix_l2norm(m);
   int j;
   for(j = 0; j < m->num_cols; j++) {
-    if (l2norms->data[0][j] < NML_MIN_COEF) {
+    if (l2norms->data[0][j] < MAT_MIN_COEF) {
       MAT_FERROR(VECTOR_J_DEGENERATE, j);
       matrix_free(l2norms);
       return 0;
@@ -1159,7 +1145,7 @@ matrix_qr *matrix_qr_solve(matrix *m) {
     rkj = 0.0;
     aj = matrix_col_get(m, j);
     for(k = 0; k < j; k++) {
-       rkj = nml_vect_dot(m, j, Q, k);
+       rkj = matrix_vect_dot(m, j, Q, k);
        R->data[k][j] = rkj;
        qk = matrix_col_get(Q, k);
        matrix_col_mult_r(qk, 0, rkj);
